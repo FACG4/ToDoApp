@@ -1,0 +1,30 @@
+{
+  "name": "todoapp",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "dependencies": {
+    "env2": "^2.2.0",
+    "pg": "^7.4.1"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dbBuild": "node src/database/db_build.js",
+    "start": "node src/server.js"
+
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/FACG4/ToDoApp.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/FACG4/ToDoApp/issues"
+  },
+  "homepage": "https://github.com/FACG4/ToDoApp#readme"
+}
