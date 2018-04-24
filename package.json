@@ -7,15 +7,16 @@
     "test": "test"
   },
   "dependencies": {
+    "bcrypt": "^2.0.1",
     "env2": "^2.2.0",
-    "pg": "^7.4.1"
+    "pg": "^7.4.1",
+    "querystring": "^0.2.0"
   },
   "devDependencies": {},
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dbBuild": "node src/database/db_build.js",
     "start": "node src/server.js"
-
   },
   "repository": {
     "type": "git",
