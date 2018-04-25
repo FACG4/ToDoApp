@@ -7,9 +7,7 @@ const handler = require('./handler');
 const type = ['/css/style.css', '/js/dom_signup.js', '/js/dom_admin.js', '/js/fetch.js', '/js/pure_functions.js', '/js/dom_success_signup.js', '/js/dom_user_page.js', '/js/dom_login.js']
 
 const router = (request, response) => {
-  const {
-    url
-  } = request;
+  const { url } = request;
 
   if (url === '/') {
     handler.serveFiles('html/user_page.html', response);
@@ -35,6 +33,8 @@ const router = (request, response) => {
     handler.deleteItem(request, response);
   } else if (url === '/addItem' && request.method === "POST") {
     handler.addItem(request, response);
+  }else if (url === "/loginUser" && request.method === "POST") {
+    handler.checkUserData(request, response);
   } else {
     response.writeHead(404, 'Content-Type:text/html');
     response.end('<h1>Page not found</h1>');
