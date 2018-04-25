@@ -1,9 +1,12 @@
 const fs = require('fs');
 const bcrypt = require("bcrypt");
-const path = require('path');
-const post = require('./database/queries/post.js');
-// const getData = require('../database/queries/get.js');
 const queryString = require('querystring');
+const path = require('path');
+
+const postQuery = require('./database/queries/post.js');
+const getQuery = require('./database/queries/get.js');
+const deleteQuery = require('./database/queries/delete.js');
+
 const contentType = {
   html: 'text/html',
   css: 'text/css',
@@ -15,16 +18,15 @@ const contentType = {
 }
 
 const serveFiles = (endpoint, response) => {
-  console.log(endpoint);
   const filePath = path.join(__dirname, '..', 'public', endpoint);
+  console.log(endpoint);
   const fileExtention = endpoint.split('.')[1];
   fs.readFile(filePath, (error, file) => {
     if (error) {
+      console.log(error);
       response.writeHead(500, 'Content-Type:text/html');
       response.end('<h1>Sorry, there was a problem loading the homepage</h1>');
-      console.log('asdgsdagdsas', error);
     }
-
     response.writeHead(200, {
       'Content-Type': `${contentType[fileExtention]}`
     });
@@ -49,19 +51,17 @@ const insertUserData = (request, response) => {
       var salt = bcrypt.genSaltSync(10);
       const passwordHash = bcrypt.hashSync(passwordd, salt);
 
-      post.postUser(username, bio, passwordHash,2, (err, res) => {
+      postQuery.postUser(username, bio, passwordHash, 2, (err, res) => {
         if (err) {
-          console.log(err);
           response.writeHead(500, {
             'Content-Type': 'text/html'
           });
           response.end("<h1>Sorry, problem in signing up!</h1>")
         } else {
           response.writeHead(302, {
-            'Location': '/'
+            'Location': '/html/success_signup.html'
           });
-          response.end("Success signed up, cheeeeeeeers :)")
-
+          response.end()
         }
       });
     } else {
@@ -74,7 +74,45 @@ const insertUserData = (request, response) => {
 }
 
 
+const admin = (request, response) => {
+  getQuery.getUsersInfo((error, result) => {
+    if (error) {
+      console.log(error);
+      response.writeHead(500, {
+        'content-Type': 'text/html'
+      });
+      response.end("<h1>Sorry, something wrong with getting users data!</h1>")
+    } else {
+      response.writeHead(200, {
+        'Content-Type': 'application/json'
+      });
+      response.end(JSON.stringify(result));
+    }
+  })
+}
+
+
+const deleteUsers = (request, response) => {
+  const id = request.headers.id;
+  deleteQuery.deleteUser(id, (error, result) => {
+    if (error) {
+      response.writeHead(500, {
+        'Content-Type': 'text/html'
+      })
+      response.end("<h1>Error in deleting this user</h1>")
+    } else {
+      response.writeHead(200, {
+        'Content-Type': 'application/json'
+      });
+      response.end();
+    }
+  });
+}
+
+
 module.exports = {
   serveFiles,
-  insertUserData
+  insertUserData,
+  admin,
+  deleteUsers
 };

@@ -4,7 +4,7 @@ DROP TABLE IF EXISTS users,lisTodo CASCADE;
 
 CREATE TABLE users(
   id SERIAL PRIMARY KEY,
-  name VARCHAR (100) NOT NULL,
+  name VARCHAR (100) UNIQUE NOT NULL,
   bio TEXT NOT NULL,
   hashPassword TEXT NOT NULL,
   role INTEGER
@@ -18,14 +18,26 @@ CREATE TABLE lisTodo(
 );
 
 
-COMMIT;
 
 
--- INSERT INTO users(name , bio ,hashPassword)
---  VALUES
---  ('sallam' , 'sallam from Palestine' , '$2a$10$8sx3//7rhdQT3WMLCsZaRelS9AJGrM6EuVsry611q43l8fM4Jhjuq'),
---  ('Balsam' , 'Balsam from Palestine' , '$2a$10$6UEoiSGXR3i6AEp3UW8ASeimQ6IwUD1.RhHzunEeRxgPo1aUjVGn.');
---
+INSERT INTO users(name , bio ,hashPassword , role)
+ VALUES
+ ('admin' , 'the only admin' , '$2a$10$8sx3//7rhdQT3WMLCsZaRelS9AJGrM6EuVsry611q43l8fM4Jhjuq',1);
+
+
+ INSERT INTO users(name , bio ,hashPassword , role)
+  VALUES
+  ('ooo' , 'tjjjjjjjj' , '$2a$10$8sx3//7rhdQT3WMLCsZaRelS9AJGrM6EuVsry611q43l8fM4Jhjuq',2);
+
+  INSERT INTO users(name , bio ,hashPassword , role)
+   VALUES
+   ('sahhhham' , 'tjjjjjjjj' , '$2a$10$8sx3//7rhdQT3WMLCsZaRelS9AJGrM6EuVsry611q43l8fM4Jhjuq',2);
+
+   INSERT INTO users(name , bio ,hashPassword , role)
+    VALUES
+    ('new user' , 'uuuuuuuuu' , '$2a$10$8sx3//7rhdQT3WMLCsZaRelS9AJGrM6EuVsry611q43l8fM4Jhjuq',2);
+-- select * from users;
+  COMMIT;
 --
 --  INSERT INTO lisTodo(todoItem ,done,userId)
 --   VALUES

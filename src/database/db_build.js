@@ -5,10 +5,10 @@ const sql = fs.readFileSync(`${__dirname}/db_build.sql`).toString();
 const dbBuild = cb => {
   dbConnection.query(sql, (err, res) => {
     if (err) {
-      return cb(err);
+       return cb(err);
     }
-      cb(null, res)
-    
+        cb(null, res)
+
   });
 };
 
