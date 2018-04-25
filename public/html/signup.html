@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Sign UP</title>
+    <link rel="stylesheet" href="../css/style.css">
+  </head>
+  <body>
+
+    <p>Sign up now..</p>
+
+<form class="formStyle" id="form" action="/insertUser" method="POST">
+  <label for="username">Username</label>
+  <input type="text" id="username" name="username">
+
+
+  <label for="password">Password</label>
+  <input type="password" id="password" name="password" required pattern="^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$">
+
+  <label for="cpassword">Cofirm Password</label>
+  <input type="password" id="cpassword" name="cpassword" required pattern="^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$">
+
+  <label for="bio">Bio</label>
+  <textarea name="bio" id="bio" rows="8" cols="8"></textarea>
+
+
+<p id="error" class="error" aria-live="polite"></p>
+  <input type="submit" id="submit" name="Submit" value="Sign UP">
+</form>
+
+
+<script type="text/javascript" src="../js/pure_functions.js"></script>
+<script type="text/javascript" src="../js/dom_signup.js"></script>
+  </body>
+</html>
