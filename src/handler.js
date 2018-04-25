@@ -53,18 +53,9 @@ const insertUserData = (request, response) => {
           if (err) {
             response.writeHead(500, {
               "Content-Type": "text/html"
-            }); <<
-            <<
-            <<
-            <
-            HEAD
-            response.end("<h1>This name is already exists!</h1>") ===
-              ===
-              =
-              response.end("<h1>Sorry, problem in signing up!</h1>"); >>>
-            >>>
-            >
-            1 aeef233cf8081dea2cc4f6375cc169da2b703df
+            });
+            response.end("<h1>This name is already exists!</h1>")
+              response.end("<h1>Sorry, problem in signing up!</h1>");
           } else {
             response.writeHead(302, {
               Location: "/html/success_signup.html"
@@ -77,21 +68,9 @@ const insertUserData = (request, response) => {
           "Content-Type": "text/html"
         });
         response.end("<h1>There is error data, check your inputs!</h1>");
-      } <<
-      <<
-      <<
-      <
-      HEAD
+      }
     })
-  } ===
-  ===
-  =
-});
-}; >>>
->>>
->
-1 aeef233cf8081dea2cc4f6375cc169da2b703df
-
+  }
 const admin = (request, response) => {
 
   getQuery.getUsersInfo((error, result) => {
@@ -106,11 +85,7 @@ const admin = (request, response) => {
         "Content-Type": "application/json"
       });
       response.end(JSON.stringify(result));
-    } <<
-    <<
-    <<
-    <
-    HEAD
+    }
   })
 }
 
@@ -149,15 +124,6 @@ const getUserName = (request, response) => {
       }
     })
   }
-
-  ===
-  ===
-  =
-});
-}; >>>
->>>
->
-1 aeef233cf8081dea2cc4f6375cc169da2b703df
 
 const deleteUsers = (request, response) => {
   const id = request.headers.id;
@@ -260,7 +226,7 @@ const checkUserData = (request, response) => {
         } else {
           console.log(response);
           response.writeHead(302, {
-            location: "../public/html/success_login.html"
+            location: "/html/user_page.html"
           });
           response.end("Done");
         }

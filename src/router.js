@@ -10,8 +10,10 @@ const router = (request, response) => {
   const { url } = request;
 
   if (url === '/') {
-    handler.serveFiles('html/user_page.html', response);
+    handler.serveFiles('html/login.html', response);
   } else if (url === '/html/success_signup.html') {
+    handler.serveFiles(url, response);
+  }else if (url === '/html/signup.html') {
     handler.serveFiles(url, response);
   } else if (url === '/html/login.html') {
     handler.serveFiles(url, response);
