@@ -56,7 +56,7 @@ const insertUserData = (request, response) => {
           response.writeHead(500, {
             'Content-Type': 'text/html'
           });
-          response.end("<h1>Sorry, problem in signing up!</h1>")
+          response.end("<h1>This name is already exists!</h1>")
         } else {
           response.writeHead(302, {
             'Location': '/html/success_signup.html'
@@ -73,8 +73,8 @@ const insertUserData = (request, response) => {
   })
 }
 
-
 const admin = (request, response) => {
+
   getQuery.getUsersInfo((error, result) => {
     if (error) {
       console.log(error);
@@ -82,6 +82,42 @@ const admin = (request, response) => {
         'content-Type': 'text/html'
       });
       response.end("<h1>Sorry, something wrong with getting users data!</h1>")
+    } else {
+      response.writeHead(200, {
+        'Content-Type': 'application/json'
+      });
+      response.end(JSON.stringify(result));
+    }
+  })
+}
+
+const itemsForUser = (request, response) => {
+  //cookie to get id of user
+  getQuery.getListItemsForUser(2, (error, result) => {
+    if (error) {
+      console.log(error);
+      response.writeHead(500, {
+        'content-Type': 'text/html'
+      });
+      response.end("<h1>Sorry, something wrong with getting user list!</h1>")
+    } else {
+      response.writeHead(200, {
+        'Content-Type': 'application/json'
+      });
+      response.end(JSON.stringify(result));
+    }
+  })
+}
+
+const getUserName = (request, response) => {
+  //cookie to get id of user
+  getQuery.getUserName(2, (error, result) => {
+    if (error) {
+      console.log(error);
+      response.writeHead(500, {
+        'content-Type': 'text/html'
+      });
+      response.end("<h1>Sorry, something wrong with getting user name!</h1>")
     } else {
       response.writeHead(200, {
         'Content-Type': 'application/json'
@@ -109,10 +145,69 @@ const deleteUsers = (request, response) => {
   });
 }
 
+const deleteItem = (request, response) => {
+  const id = request.headers.id;
+  deleteQuery.deleteItem(id, (error, result) => {
+    if (error) {
+      response.writeHead(500, {
+        'Content-Type': 'text/html'
+      })
+      response.end("<h1>Error in deleting this item</h1>")
+    } else {
+      response.writeHead(200, {
+        'Content-Type': 'application/json'
+      });
+      response.end();
+    }
+  });
+}
+
+
+
+const addItem = (request, response) => {
+  let data = '';
+  request.on('data', (chunk) => {
+    data += chunk;
+  });
+
+  request.on('end', () => {
+    const dataObj = JSON.parse(data);
+    const item_body = dataObj.item;
+    const user_id = dataObj.id;
+
+    if (item_body.length > 0) {
+
+      postQuery.postItem(item_body, true, user_id, (err, res) => {
+        if (err) {
+          response.writeHead(200, {
+            'Content-Type': 'application/json'
+          });
+          response.end();
+        } else {
+          console.log('ffff');
+          response.writeHead(200, {
+            'Content-Type': 'application/json'
+          });
+          response.end()
+        }
+      });
+    } else {
+      response.writeHead(500, {
+        'Content-Type': "text/html"
+      });
+      response.end("<h1>There is error data, check your inputs!</h1>");
+    }
+  });
+}
+
 
 module.exports = {
   serveFiles,
   insertUserData,
   admin,
-  deleteUsers
+  deleteUsers,
+  deleteItem,
+  itemsForUser,
+  getUserName,
+  addItem
 };
