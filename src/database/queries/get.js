@@ -18,7 +18,17 @@ const getListItemsForUser = (user_id, cb) => {
 }
 
 const getUserName = (user_id, cb) => {
-  const sql = `select id , name , bio from users where id= ${user_id}`;
+  const sql = `select  name , bio from users where id= ${user_id}`;
+
+  dbConnection.query(sql, (error, result) => {
+    if (error) cb(error)
+    cb(null, result.rows);
+  })
+}
+
+
+const checkUsersInfo = (user_name, cb) => {
+  const sql = `SELECT * FROM users WHERE name = '${user_name}'`;
 
   dbConnection.query(sql, (error, result) => {
     if (error) cb(error)
@@ -30,5 +40,6 @@ const getUserName = (user_id, cb) => {
 module.exports = {
   getUsersInfo,
   getListItemsForUser,
-  getUserName
+  getUserName,
+checkUsersInfo
 };

@@ -23,15 +23,13 @@ INSERT INTO users(name , bio ,hashPassword , role)
 
  INSERT INTO users(name , bio ,hashPassword , role)
   VALUES
-  ('ooo' , 'tjjjjjjjj' , '$2a$10$8sx3//7rhdQT3WMLCsZaRelS9AJGrM6EuVsry611q43l8fM4Jhjuq',2);
+  ('sallam' , 'Sallam from Palestine :)' , '$2a$10$8sx3//7rhdQT3WMLCsZaRelS9AJGrM6EuVsry611q43l8fM4Jhjuq',2);
 
   INSERT INTO users(name , bio ,hashPassword , role)
    VALUES
-   ('sahhhham' , 'tjjjjjjjj' , '$2a$10$8sx3//7rhdQT3WMLCsZaRelS9AJGrM6EuVsry611q43l8fM4Jhjuq',2);
+   ('Balsam' , 'Hi, this is Balsam!' , '$2a$10$8sx3//7rhdQT3WMLCsZaRelS9AJGrM6EuVsry611q43l8fM4Jhjuq',2);
 
-   INSERT INTO users(name , bio ,hashPassword , role)
-    VALUES
-    ('new user' , 'uuuuuuuuu' , '$2a$10$8sx3//7rhdQT3WMLCsZaRelS9AJGrM6EuVsry611q43l8fM4Jhjuq',2);
+
 
    INSERT INTO listTodo(todoItem , done  , userId)
     VALUES

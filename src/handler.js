@@ -2,6 +2,8 @@ const fs = require("fs");
 const bcrypt = require("bcrypt");
 const queryString = require("querystring");
 const path = require("path");
+const jwt = require('jsonwebtoken');
+require('env2')('../config.env');
 const auth_u = require("./database/queries/auth.js");
 const postQuery = require("./database/queries/post.js");
 const getQuery = require("./database/queries/get.js");
@@ -33,6 +35,12 @@ const serveFiles = (endpoint, response) => {
     response.end(file);
   });
 };
+
+
+
+
+
+
 
 const insertUserData = (request, response) => {
     let data = "";
@@ -197,6 +205,9 @@ const addItem = (request, response) => {
   });
 }
 
+
+
+
 const checkUserData = (request, response) => {
   let data = "";
   request.on("data", chunk => {
@@ -204,31 +215,49 @@ const checkUserData = (request, response) => {
   });
   console.log("Data: ", data);
   request.on("end", () => {
+
     const objectData = queryString.parse(data);
+
     const passwordd = objectData.password;
     const name = objectData.username;
-    // console.log(passwordd);
-    // console.log(response);
-    if (name.length > 0) {
-      auth_u.checkUsersInfo(name, passwordd, (err, res) => {
+    const role = objectData.role;
+    const payload = {role : role};
+    const secret = process.env.MY_SECRET;
+     var token = jwt.sign(payload, secret);
+
+    if (name.length > 0 || passwordd.length > 0) {
+      getQuery.checkUsersInfo(name, (err, res) => {
         if (err) {
-          let typeError = err.type;
-          if (typeError === "database error") {
-            response.writeHead(500, "Content-Type:text/html");
-            response.end("<h1>Sorry, something error</h1>");
-          } else {
-            response.writeHead(500, "Content-Type:text/html");
-            response.end("<h1>Sorry, password not match</h1>");
-          }
-        } else if (response.length == 0) {
-          response.writeHead(500, "Content-Type:text/html");
-          response.end("<h1>Sorry, user not found</h1>");
-        } else {
-          console.log(response);
-          response.writeHead(302, {
-            location: "/html/user_page.html"
+          response.writeHead(500, {
+            "Content-Type": "text/html"
           });
-          response.end("Done");
+          response.end("<h1>Error Login!</h1>")
+        } else {
+          let dataFromDb = JSON.stringify(res);
+          let objData = JSON.parse(dataFromDb);
+          console.log(objData);
+
+          bcrypt.compare(passwordd, objData[0].hashpassword, function(error, result) {
+            if (error) {
+              console.log(error);
+              response.writeHead(500, {
+                "Content-Type": "text/html"
+              });
+              response.end("<h1>Wrong PassWord!</h1>")
+            } else {
+
+
+              response.writeHead(302, {
+                location: "/html/user_page.html",
+                'Set-Cookie': `token=${token};httpOnly;max-age=9000`
+                });
+              response.end();
+
+
+
+
+            }
+          });
         }
       });
     } else {
@@ -237,6 +266,16 @@ const checkUserData = (request, response) => {
     }
   });
 };
+
+
+
+const logout = (req, res) => {
+     res.writeHead(302, {
+      Location: '/',
+      'Set-Cookie': `token=0; Max-Age=0`
+    });
+    res.end();
+  };
 
 module.exports = {
   serveFiles,
@@ -247,5 +286,6 @@ module.exports = {
   itemsForUser,
   getUserName,
   addItem,
-  checkUserData
+  checkUserData,
+  logout
 };
