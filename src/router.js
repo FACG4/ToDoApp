@@ -17,7 +17,7 @@ const router = (request, response) => {
     handler.serveFiles(url, response);
   } else if (url === '/html/signup.html') {
     handler.serveFiles(url, response);
-  } else if (url === '/html/login.html') {
+  } else if (url === '/html/admin.html') {
     handler.serveFiles(url, response);
   } else if (url === '/html/user_page.html') {
     handler.serveFiles(url, response);

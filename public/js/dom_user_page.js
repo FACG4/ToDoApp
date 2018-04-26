@@ -10,7 +10,6 @@ const getUserItems = (error, data) => {
     throw new Error(error);
   } else {
     const userItems = JSON.parse(data);
-
     const listOfItems = create('ul', selector('results'));
     userItems.forEach(info => {
 
@@ -33,9 +32,9 @@ const getUserName = (err, data) => {
   else {
     const userItems = JSON.parse(data);
     console.log(userItems);
-    user_name.textContent = 'Hi '+userItems[0].name;
-    bio.textContent = 'Bio: '+userItems[0].bio;
-    id = userItems[0].id;
+    user_name.textContent = userItems.username;
+    bio.textContent = userItems.bio;
+    id = userItems.id;
   }
 }
 

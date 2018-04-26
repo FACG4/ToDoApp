@@ -32,7 +32,7 @@ const checkUsersInfo = (user_name, cb) => {
 
   dbConnection.query(sql, (error, result) => {
     if (error) cb(error)
-    cb(null, result.rows);
+    cb(null, result.rows)
   })
 }
 
@@ -41,5 +41,6 @@ module.exports = {
   getUsersInfo,
   getListItemsForUser,
   getUserName,
-checkUsersInfo
+  checkUsersInfo
+
 };
