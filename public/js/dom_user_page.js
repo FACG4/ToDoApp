@@ -10,7 +10,6 @@ const getUserItems = (error, data) => {
     throw new Error(error);
   } else {
     const userItems = JSON.parse(data);
-console.log(">>>>>>>>>>>",userItems);
     const listOfItems = create('ul', selector('results'));
     userItems.forEach(info => {
 

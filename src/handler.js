@@ -9,8 +9,9 @@ const {
   sign,
   verify
 } = require('jsonwebtoken');
+const jwt = require('jsonwebtoken');
+require('env2')('../config.env');
 
-const auth_u = require("./database/queries/auth.js");
 const postQuery = require("./database/queries/post.js");
 const getQuery = require("./database/queries/get.js");
 const deleteQuery = require("./database/queries/delete.js");
@@ -41,6 +42,12 @@ const serveFiles = (endpoint, response) => {
     response.end(file);
   });
 };
+
+
+
+
+
+
 
 const insertUserData = (request, response) => {
   let data = "";
@@ -225,6 +232,9 @@ const addItem = (request, response) => {
   });
 }
 
+
+
+
 const checkUserData = (request, response) => {
   let data = "";
   request.on("data", chunk => {
@@ -237,6 +247,13 @@ const checkUserData = (request, response) => {
 
     const passwordd = objectData.password;
     const name = objectData.username;
+
+    const role = objectData.role;
+    const payload = {
+      role: role
+    };
+    const secret = process.env.MY_SECRET;
+    var token = jwt.sign(payload, secret);
 
     if (name.length > 0 || passwordd.length > 0) {
       getQuery.checkUsersInfo(name, (err, res) => {
@@ -301,6 +318,31 @@ const checkUserData = (request, response) => {
               }
             });
           }
+          let dataFromDb = JSON.stringify(res);
+          let objData = JSON.parse(dataFromDb);
+          console.log(objData);
+
+          bcrypt.compare(passwordd, objData[0].hashpassword, function(error, result) {
+            if (error) {
+              console.log(error);
+              response.writeHead(500, {
+                "Content-Type": "text/html"
+              });
+              response.end("<h1>Wrong PassWord!</h1>")
+            } else {
+
+
+              response.writeHead(302, {
+                location: "/html/user_page.html",
+                'Set-Cookie': `token=${token};httpOnly;max-age=9000`
+              });
+              response.end();
+
+
+
+
+            }
+          });
         }
       });
     } else {
@@ -308,6 +350,16 @@ const checkUserData = (request, response) => {
       response.end("<h1>Sorry, Enter some content</h1>");
     }
   });
+};
+
+
+
+const logout = (req, res) => {
+  res.writeHead(302, {
+    Location: '/',
+    'Set-Cookie': `token=0; Max-Age=0`
+  });
+  res.end();
 };
 
 module.exports = {
@@ -319,5 +371,6 @@ module.exports = {
   itemsForUser,
   getUserName,
   addItem,
-  checkUserData
+  checkUserData,
+  logout
 };

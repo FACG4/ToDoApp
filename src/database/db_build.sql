@@ -23,8 +23,9 @@ INSERT INTO users(name , bio ,hashPassword , role)
  ('ooo' , 'tjjjjjjjj' , '$2a$10$8sx3//7rhdQT3WMLCsZaRelS9AJGrM6EuVsry611q43l8fM4Jhjuq',2),
  ('sahhhham' , 'tjjjjjjjj' , '$2a$10$8sx3//7rhdQT3WMLCsZaRelS9AJGrM6EuVsry611q43l8fM4Jhjuq',2),
  ('new user' , 'uuuuuuuuu' , '$2a$10$8sx3//7rhdQT3WMLCsZaRelS9AJGrM6EuVsry611q43l8fM4Jhjuq',2),
- ('BB' , 'balsam b' , '$2b$10$JVkylRMYoPOpBnFG72A.jezsnMSwhZh4S5CvwBspfa90lA9xy8BLa' ,2);
-
+ ('BB' , 'balsam b' , '$2b$10$JVkylRMYoPOpBnFG72A.jezsnMSwhZh4S5CvwBspfa90lA9xy8BLa' ,2),
+ ('Balsam' , 'Hi, this is Balsam!' , '$2a$10$8sx3//7rhdQT3WMLCsZaRelS9AJGrM6EuVsry611q43l8fM4Jhjuq',2),
+ ('sallam' , 'Sallam from Palestine :)' , '$2a$10$8sx3//7rhdQT3WMLCsZaRelS9AJGrM6EuVsry611q43l8fM4Jhjuq',2);
 
    INSERT INTO listTodo(todoItem , done  , userId)
     VALUES
