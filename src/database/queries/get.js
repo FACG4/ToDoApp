@@ -22,6 +22,16 @@ const getUserName = (user_id, cb) => {
 
   dbConnection.query(sql, (error, result) => {
     if (error) cb(error)
+    cb(null, result.rows)
+  })
+}
+
+const checkUsersInfo = (user_name, cb) => {
+  const sql = `SELECT * FROM users WHERE name = '${user_name}'`;
+
+  dbConnection.query(sql, (error, result) => {
+    if (error) cb(error)
+    console.log(result.rows);
     cb(null, result.rows);
   })
 }
@@ -30,5 +40,6 @@ const getUserName = (user_id, cb) => {
 module.exports = {
   getUsersInfo,
   getListItemsForUser,
-  getUserName
+  getUserName,
+  checkUsersInfo
 };

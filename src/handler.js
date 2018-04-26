@@ -2,6 +2,14 @@ const fs = require("fs");
 const bcrypt = require("bcrypt");
 const queryString = require("querystring");
 const path = require("path");
+const {
+  parse
+} = require('cookie');
+const {
+  sign,
+  verify
+} = require('jsonwebtoken');
+
 const auth_u = require("./database/queries/auth.js");
 const postQuery = require("./database/queries/post.js");
 const getQuery = require("./database/queries/get.js");
@@ -35,42 +43,41 @@ const serveFiles = (endpoint, response) => {
 };
 
 const insertUserData = (request, response) => {
-    let data = "";
-    request.on("data", chunk => {
-      data += chunk;
-    });
-    request.on("end", () => {
-      const objectData = queryString.parse(data);
-      const passwordd = objectData.password;
-      const username = objectData.username;
-      const bio = objectData.bio;
+  let data = "";
+  request.on("data", chunk => {
+    data += chunk;
+  });
+  request.on("end", () => {
+    const objectData = queryString.parse(data);
+    const passwordd = objectData.password;
+    const username = objectData.username;
+    const bio = objectData.bio;
 
-      if (passwordd.length > 0 || username.length > 0 || bio.length > 0) {
-        var salt = bcrypt.genSaltSync(10);
-        const passwordHash = bcrypt.hashSync(passwordd, salt);
+    if (passwordd.length > 0 || username.length > 0 || bio.length > 0) {
+      var salt = bcrypt.genSaltSync(10);
+      const passwordHash = bcrypt.hashSync(passwordd, salt);
 
-        postQuery.postUser(username, bio, passwordHash, 2, (err, res) => {
-          if (err) {
-            response.writeHead(500, {
-              "Content-Type": "text/html"
-            });
-            response.end("<h1>This name is already exists!</h1>")
-              response.end("<h1>Sorry, problem in signing up!</h1>");
-          } else {
-            response.writeHead(302, {
-              Location: "/html/success_signup.html"
-            });
-            response.end();
-          }
-        });
-      } else {
-        response.end(500, {
-          "Content-Type": "text/html"
-        });
-        response.end("<h1>There is error data, check your inputs!</h1>");
-      }
-    })
-  }
+      postQuery.postUser(username, bio, passwordHash, 2, (err, res) => {
+        if (err) {
+          response.writeHead(500, {
+            "Content-Type": "text/html"
+          });
+          response.end("<h1>This name is already exists!</h1>")
+        } else {
+          response.writeHead(302, {
+            Location: "/html/success_signup.html"
+          });
+          response.end();
+        }
+      });
+    } else {
+      response.end(500, {
+        "Content-Type": "text/html"
+      });
+      response.end("<h1>There is error data, check your inputs!</h1>");
+    }
+  })
+}
 const admin = (request, response) => {
 
   getQuery.getUsersInfo((error, result) => {
@@ -81,49 +88,71 @@ const admin = (request, response) => {
       });
       response.end("<h1>Sorry, something wrong with getting users data!</h1>");
     } else {
-      response.writeHead(200, {
-        "Content-Type": "application/json"
-      });
-      response.end(JSON.stringify(result));
+      if (result) {
+        response.writeHead(200, {
+          'Content-Type': 'application/json'
+        });
+        response.end(JSON.stringify(result));
+      } else {
+        response.writeHead(200, {
+          'Content-Type': 'application/json'
+        });
+        response.end();
+      }
     }
   })
 }
 
 const itemsForUser = (request, response) => {
-  //cookie to get id of user
-  getQuery.getListItemsForUser(2, (error, result) => {
-    if (error) {
-      console.log(error);
-      response.writeHead(500, {
-        'content-Type': 'text/html'
-      });
-      response.end("<h1>Sorry, something wrong with getting user list!</h1>")
+  const {
+    jwt
+  } = parse(request.headers.cookie);
+  verify(jwt, process.env.SECRET_COOKIE, (err, jwt) => {
+    if (err) {
+      res.writeHead(
+        401, {
+          'Content-Type': 'text/plain'
+        }
+      );
+      res.end("fail !");
+    } else {
+      getQuery.getListItemsForUser(jwt.id, (error, result) => {
+        if (error) {
+          response.writeHead(500, {
+            'content-Type': 'text/html'
+          });
+          response.end("<h1>Sorry, something wrong with getting user list!</h1>")
+        } else {
+          response.writeHead(200, {
+            'Content-Type': 'application/json'
+          });
+          response.end(JSON.stringify(result));
+        }
+      })
+    }
+  });
+}
+
+const getUserName = (request, response) => {
+  const {
+    jwt
+  } = parse(request.headers.cookie);
+  verify(jwt, process.env.SECRET_COOKIE, (err, jwt) => {
+    if (err) {
+      res.writeHead(
+        401, {
+          'Content-Type': 'text/plain'
+        }
+      );
+      res.end("fail !");
     } else {
       response.writeHead(200, {
         'Content-Type': 'application/json'
       });
-      response.end(JSON.stringify(result));
+      response.end(JSON.stringify(jwt));
     }
-  })
+  });
 }
-
-const getUserName = (request, response) => {
-    //cookie to get id of user
-    getQuery.getUserName(2, (error, result) => {
-      if (error) {
-        console.log(error);
-        response.writeHead(500, {
-          'content-Type': 'text/html'
-        });
-        response.end("<h1>Sorry, something wrong with getting user name!</h1>")
-      } else {
-        response.writeHead(200, {
-          'Content-Type': 'application/json'
-        });
-        response.end(JSON.stringify(result));
-      }
-    })
-  }
 
 const deleteUsers = (request, response) => {
   const id = request.headers.id;
@@ -181,7 +210,6 @@ const addItem = (request, response) => {
           });
           response.end();
         } else {
-          console.log('ffff');
           response.writeHead(200, {
             'Content-Type': 'application/json'
           });
@@ -204,31 +232,75 @@ const checkUserData = (request, response) => {
   });
   console.log("Data: ", data);
   request.on("end", () => {
+
     const objectData = queryString.parse(data);
+
     const passwordd = objectData.password;
     const name = objectData.username;
-    // console.log(passwordd);
-    // console.log(response);
-    if (name.length > 0) {
-      auth_u.checkUsersInfo(name, passwordd, (err, res) => {
+
+    if (name.length > 0 || passwordd.length > 0) {
+      getQuery.checkUsersInfo(name, (err, res) => {
         if (err) {
-          let typeError = err.type;
-          if (typeError === "database error") {
-            response.writeHead(500, "Content-Type:text/html");
-            response.end("<h1>Sorry, something error</h1>");
-          } else {
-            response.writeHead(500, "Content-Type:text/html");
-            response.end("<h1>Sorry, password not match</h1>");
-          }
-        } else if (response.length == 0) {
-          response.writeHead(500, "Content-Type:text/html");
-          response.end("<h1>Sorry, user not found</h1>");
-        } else {
-          console.log(response);
-          response.writeHead(302, {
-            location: "/html/user_page.html"
+          response.writeHead(500, {
+            "Content-Type": "text/html"
           });
-          response.end("Done");
+          response.end("<h1>Error Login!</h1>")
+        } else {
+
+          if (res.length === 0) {
+            response.writeHead(500, {
+              "Content-Type": "text/html"
+            });
+            response.end("<h1>Wrong name!</h1>")
+          } else {
+
+            let dataFromDb = JSON.stringify(res);
+            let objData = JSON.parse(dataFromDb);
+
+            console.log(passwordd);
+            bcrypt.compare(passwordd, objData[0].hashpassword, function(error, result) {
+              if (error) {
+                response.writeHead(500, {
+                  "Content-Type": "text/html"
+                });
+                response.end("<h1>Wrong PassWord!</h1>")
+              } else {
+                if (result == true) {
+
+                  const userData = {
+                    id: objData[0].id,
+                    username: objData[0].name,
+                    user_role: objData[0].role,
+                    bio: objData[0].bio
+                  }
+                  if (objData[0].role == 2) {
+
+                    console.log(userData);
+                    const cookie = sign(userData, process.env.SECRET_COOKIE);
+                    response.writeHead(302, {
+                      location: "/html/user_page.html",
+                      'Set-Cookie': `jwt=${cookie}; HttpOnly`
+                    });
+                    response.end();
+
+                  } else {
+                    const cookie = sign(userData, process.env.SECRET_COOKIE);
+                    response.writeHead(302, {
+                      location: "/html/admin.html",
+                      'Set-Cookie': `jwt=${cookie}; HttpOnly`
+                    });
+                    response.end();
+                  }
+
+                } else {
+                  response.writeHead(500, {
+                    "Content-Type": "text/html"
+                  });
+                  response.end("<h1>Wrong PassWord!</h1>")
+                }
+              }
+            });
+          }
         }
       });
     } else {
