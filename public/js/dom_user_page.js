@@ -33,8 +33,8 @@ const getUserName = (err, data) => {
   else {
     const userItems = JSON.parse(data);
     console.log(userItems);
-    user_name.textContent = userItems[0].name;
-    bio.textContent = userItems[0].bio;
+    user_name.textContent = 'Hi '+userItems[0].name;
+    bio.textContent = 'Bio: '+userItems[0].bio;
     id = userItems[0].id;
   }
 }
